@@ -79,7 +79,7 @@ pub(crate) const SCALE_TARGET_DPI: f64 = 96.0;
 /// Builder abstraction for creating new windows.
 pub(crate) struct WindowBuilder {
     app: Application,
-    handler: Option<Box<dyn WinHandler>>,
+    handler: Option<Box<dyn WinHandler<Backend=piet_common::Piet<'static>> + 'static>>,
     title: String,
     menu: Option<Menu>,
     present_strategy: PresentStrategy,
@@ -215,7 +215,7 @@ struct MyWndProc {
 
 /// The mutable state of the window.
 struct WndState {
-    handler: Box<dyn WinHandler>,
+    handler: Box<dyn WinHandler<Backend=piet_common::Piet<'static>> + 'static>,
     render_target: Option<DeviceContext>,
     dxgi_state: Option<DxgiState>,
     min_size: Option<Size>,
@@ -1180,7 +1180,7 @@ impl WindowBuilder {
     }
 
     /// This takes ownership, and is typically used with UiMain
-    pub fn set_handler(&mut self, handler: Box<dyn WinHandler>) {
+    pub fn set_handler(&mut self, handler: Box<dyn WinHandler<Backend=piet_common::Piet<'static>> + 'static>) {
         self.handler = Some(handler);
     }
 

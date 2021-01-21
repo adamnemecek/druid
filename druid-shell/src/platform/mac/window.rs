@@ -109,7 +109,7 @@ impl Default for WindowHandle {
 
 /// Builder abstraction for creating new windows.
 pub(crate) struct WindowBuilder {
-    handler: Option<Box<dyn WinHandler>>,
+    handler: Option<Box<dyn WinHandler<Backend=piet_common::Piet<'static>> + 'static>>,
     title: String,
     menu: Option<Menu>,
     size: Size,
@@ -143,7 +143,7 @@ enum IdleKind {
 /// This is the state associated with our custom NSView.
 struct ViewState {
     nsview: WeakPtr,
-    handler: Box<dyn WinHandler>,
+    handler: Box<dyn WinHandler<Backend=piet_common::Piet<'static>> + 'static>,
     idle_queue: Arc<Mutex<Vec<IdleKind>>>,
     /// Tracks window focusing left clicks
     focus_click: bool,
@@ -173,7 +173,7 @@ impl WindowBuilder {
         }
     }
 
-    pub fn set_handler(&mut self, handler: Box<dyn WinHandler>) {
+    pub fn set_handler(&mut self, handler: Box<dyn WinHandler<Backend=piet_common::Piet<'static>> + 'static>) {
         self.handler = Some(handler);
     }
 
@@ -435,7 +435,7 @@ lazy_static! {
     };
 }
 
-fn make_view(handler: Box<dyn WinHandler>) -> (id, Weak<Mutex<Vec<IdleKind>>>) {
+fn make_view(handler: Box<dyn WinHandler<Backend=piet_common::Piet<'static>> + 'static>) -> (id, Weak<Mutex<Vec<IdleKind>>>) {
     let idle_queue = Arc::new(Mutex::new(Vec::new()));
     let queue_handle = Arc::downgrade(&idle_queue);
     unsafe {

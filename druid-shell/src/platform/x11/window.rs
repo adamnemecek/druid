@@ -91,7 +91,7 @@ impl From<Visualtype> for xcb_visualtype_t {
 
 pub(crate) struct WindowBuilder {
     app: Application,
-    handler: Option<Box<dyn WinHandler>>,
+    handler: Option<Box<dyn WinHandler<Backend=piet_common::Piet<'static>> + 'static>>,
     title: String,
     size: Size,
     min_size: Size,
@@ -108,7 +108,7 @@ impl WindowBuilder {
         }
     }
 
-    pub fn set_handler(&mut self, handler: Box<dyn WinHandler>) {
+    pub fn set_handler(&mut self, handler: Box<dyn WinHandler<Backend=piet_common::Piet<'static>> + 'static>) {
         self.handler = Some(handler);
     }
 
@@ -385,7 +385,7 @@ pub(crate) struct Window {
     id: u32,
     gc: Gcontext,
     app: Application,
-    handler: RefCell<Box<dyn WinHandler>>,
+    handler: RefCell<Box<dyn WinHandler<Backend=piet_common::Piet<'static>> + 'static>>,
     cairo_surface: RefCell<XCBSurface>,
     atoms: WindowAtoms,
     state: RefCell<WindowState>,

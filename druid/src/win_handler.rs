@@ -823,6 +823,7 @@ impl<T: Data> crate::shell::AppHandler for AppHandler<T> {
 }
 
 impl<T: Data> WinHandler for DruidHandler<T> {
+    type Backend = Piet<'static>;
     fn connect(&mut self, handle: &WindowHandle) {
         self.app_state
             .connect_window(self.window_id, handle.clone());
@@ -835,7 +836,7 @@ impl<T: Data> WinHandler for DruidHandler<T> {
         self.app_state.prepare_paint_window(self.window_id);
     }
 
-    fn paint(&mut self, piet: &mut Piet, region: &Region) {
+    fn paint(&mut self, piet: &mut Self::Backend, region: &Region) {
         self.app_state.paint_window(self.window_id, piet, region);
     }
 

@@ -105,7 +105,7 @@ enum DeferredOp {
 /// Builder abstraction for creating new windows
 pub(crate) struct WindowBuilder {
     app: Application,
-    handler: Option<Box<dyn WinHandler>>,
+    handler: Option<Box<dyn WinHandler<Backend=piet_common::Piet<'static>> + 'static>>,
     title: String,
     menu: Option<Menu>,
     position: Option<Point>,
@@ -155,7 +155,7 @@ pub(crate) struct WindowState {
     surface_size: Cell<(i32, i32)>,
     // The invalid region, in display points.
     invalid: RefCell<Region>,
-    pub(crate) handler: RefCell<Box<dyn WinHandler>>,
+    pub(crate) handler: RefCell<Box<dyn WinHandler<Backend=piet_common::Piet<'static>> + 'static>>,
     idle_queue: Arc<Mutex<Vec<IdleKind>>>,
     current_keycode: Cell<Option<u16>>,
     click_counter: ClickCounter,
@@ -182,7 +182,7 @@ impl WindowBuilder {
         }
     }
 
-    pub fn set_handler(&mut self, handler: Box<dyn WinHandler>) {
+    pub fn set_handler(&mut self, handler: Box<dyn WinHandler<Backend=piet_common::Piet<'static>> + 'static>) {
         self.handler = Some(handler);
     }
 

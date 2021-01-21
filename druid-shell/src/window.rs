@@ -352,7 +352,7 @@ impl WindowBuilder {
     /// Set the [`WinHandler`] for this window.
     ///
     /// This is the object that will receive callbacks from this window.
-    pub fn set_handler(&mut self, handler: Box<dyn WinHandler>) {
+    pub fn set_handler(&mut self, handler: Box<dyn WinHandler<Backend=piet_common::Piet<'static>> + 'static>) {
         self.0.set_handler(handler)
     }
 
@@ -429,6 +429,8 @@ impl WindowBuilder {
 /// recursively; implementers are expected to use `RefCell` or the like,
 /// but should be careful to keep the lifetime of the borrow short.
 pub trait WinHandler {
+    type Backend;
+
     /// Provide the handler with a handle to the window so that it can
     /// invalidate or make other requests.
     ///
@@ -457,7 +459,7 @@ pub trait WinHandler {
     /// Request the handler to paint the window contents.  `invalid` is the region in [display
     /// points](crate::Scale) that needs to be repainted; painting outside the invalid region will
     /// have no effect.
-    fn paint(&mut self, piet: &mut piet_common::Piet, invalid: &Region);
+    fn paint(&mut self, piet: &mut Self::Backend, invalid: &Region);
 
     /// Called when the resources need to be rebuilt.
     ///

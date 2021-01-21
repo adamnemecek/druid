@@ -66,7 +66,7 @@ macro_rules! get_modifiers {
 
 /// Builder abstraction for creating new windows.
 pub(crate) struct WindowBuilder {
-    handler: Option<Box<dyn WinHandler>>,
+    handler: Option<Box<dyn WinHandler<Backend=piet_common::Piet<'static>> + 'static>>,
     title: String,
     cursor: Cursor,
     menu: Option<Menu>,
@@ -92,7 +92,7 @@ struct WindowState {
     scale: Cell<Scale>,
     area: Cell<ScaledArea>,
     idle_queue: Arc<Mutex<Vec<IdleKind>>>,
-    handler: RefCell<Box<dyn WinHandler>>,
+    handler: RefCell<Box<dyn WinHandler<Backend=piet_common::Piet<'static>> + 'static>>,
     window: web_sys::Window,
     canvas: web_sys::HtmlCanvasElement,
     context: web_sys::CanvasRenderingContext2d,
@@ -337,7 +337,7 @@ impl WindowBuilder {
     }
 
     /// This takes ownership, and is typically used with UiMain
-    pub fn set_handler(&mut self, handler: Box<dyn WinHandler>) {
+    pub fn set_handler(&mut self, handler: Box<dyn WinHandler<Backend=piet_common::Piet<'static>> + 'static>) {
         self.handler = Some(handler);
     }
 
